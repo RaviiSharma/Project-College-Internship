@@ -6,11 +6,10 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Ravi Kumar Sharma, Akash Vishwas, Madhuri Lenka, Subjit Banerji",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",
-    "email-validator": "^2.0.4",
     "express": "^4.18.1",
     "mongoose": "^6.6.0",
     "nodemon": "^2.0.19",

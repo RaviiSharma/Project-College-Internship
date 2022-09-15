@@ -7,30 +7,26 @@ const isValid = function (value) {
   if (typeof value === "string") return true;
 };
 
-const isvalidRequest = function (requestBody) {
+const isvalidRequest = (requestBody) => {
   return Object.keys(requestBody).length > 0;
 };
 
-const createIntern = async function (req, res) {
+const createIntern = async (req, res) => {
   try {
     const requestBody = req.body;
     if (!isvalidRequest(requestBody))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "invalid request parameter ,please provied intern detail",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "invalid request parameter ,please provied intern detail",
+      });
 
     let { name, email, mobile, collegeName } = requestBody;
 
     if (!isValid(name) || !/^[a-zA-Z]+([\s][a-zA-Z]+)*$/.test(name))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "Name is mandatory & should be in correct format",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "Name is mandatory & should be in correct format",
+      });
 
     if (!isValid(email) || !/^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/.test(email))
       return res
@@ -43,13 +39,11 @@ const createIntern = async function (req, res) {
         .send({ status: false, message: "Email should be unique" });
 
     if (!isValid(mobile) || !/^[6-9]{1}[0-9]{9}$/im.test(mobile))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message:
-            "Mobile is mandatory & should be in valid format (10 digit Indian number)",
-        });
+      return res.status(400).send({
+        status: false,
+        message:
+          "Mobile is mandatory & should be in valid format (10 digit Indian number)",
+      });
 
     if (await internModel.findOne({ mobile }))
       return res
@@ -57,12 +51,10 @@ const createIntern = async function (req, res) {
         .send({ status: false, message: "Mobile Number should be unique" });
 
     if (!collegeName || !isValid(collegeName))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "collegeName is mandatory & should be valid",
-        });
+      return res.status(400).send({
+        status: false,
+        message: "collegeName is mandatory & should be valid",
+      });
 
     let collegeDoc = await collegeModel.findOne({
       name: requestBody.collegeName,
@@ -71,6 +63,7 @@ const createIntern = async function (req, res) {
       return res
         .status(404)
         .send({ status: false, message: "no such collegeName is present" });
+
     requestBody.collegeId = collegeDoc._id;
     let saveData = await internModel.create(requestBody);
     return res.status(201).send({ status: true, data: saveData });

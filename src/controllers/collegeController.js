@@ -99,8 +99,9 @@ const collegeDetails = async (req, res) => {
       name: findcollege.name,
       fullName: findcollege.fullName,
       logoLink: findcollege.logoLink,
-      interns: candidates,
-    }; //sending newly created details document
+      interns: candidates
+    }; 
+    //sending newly created details document
     return res.status(200).send({ status: true, data: details });
   } catch (error) {
     return res.status(500).send({ status: false, msg: error.message });

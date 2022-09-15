@@ -6,7 +6,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Ravi Kumar Sharma, Akash Vishwas, Madhuri Lenka, Subjit Banerji",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/akash654321git/-Intern-Project.git"
+  },
+  "author": "Ravi Kumar Sharma, Akash Vishwash, Madhuri Lenka, Subjit Banerjee",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",

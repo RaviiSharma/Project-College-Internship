@@ -8,6 +8,11 @@ const createCollege = async (req, res) => {
 
     const { name, fullName, logoLink } = data; //destructuring required fields
 
+    if (Object.keys(data) == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please provide all data" });
+
     // in case name is not given or not correct
     if (!name || !name.match(/^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/g)) {
       return res
@@ -61,12 +66,10 @@ const collegeDetails = async (req, res) => {
       !collegeName ||
       !/^[a-z]((?![? .,'-]$)[ .]?[a-z]){1,10}$/g.test(collegeName)
     ) {
-      return res
-        .status(400)
-        .send({
-          status: false,
-          msg: "College Name is required to perform this action",
-        });
+      return res.status(400).send({
+        status: false,
+        msg: "College Name is required to perform this action",
+      });
     }
     let findcollege = await collegeModel
       .findOne({ name: collegeName, isDeleted: false })
@@ -87,20 +90,18 @@ const collegeDetails = async (req, res) => {
 
     // since find gives us an array, we can check for its length and in case it's zero, this would be our response
     if (!candidates.length) {
-      return res
-        .status(404)
-        .send({
-          status: false,
-          msg: "no students from this college has applied yet",
-        });
+      return res.status(404).send({
+        status: false,
+        msg: "no students from this college has applied yet",
+      });
     }
     //creating a details object with all the required keys and values
     let details = {
       name: findcollege.name,
       fullName: findcollege.fullName,
       logoLink: findcollege.logoLink,
-      interns: candidates
-    }; 
+      interns: candidates,
+    };
     //sending newly created details document
     return res.status(200).send({ status: true, data: details });
   } catch (error) {

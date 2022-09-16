@@ -14,13 +14,13 @@ const isvalidRequest = (requestBody) => {
 const createIntern = async (req, res) => {
   try {
     const requestBody = req.body;
-    if (!isvalidRequest(requestBody))
-      return res.status(400).send({
-        status: false,
-        message: "invalid request parameter ,please provied intern detail",
-      });
 
     let { name, email, mobile, collegeName } = requestBody;
+
+    if (Object.keys(requestBody) == 0)
+      return res
+        .status(400)
+        .send({ status: false, message: "Please provide all data" });
 
     if (!isValid(name) || !/^[a-zA-Z]+([\s][a-zA-Z]+)*$/.test(name))
       return res.status(400).send({

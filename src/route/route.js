@@ -7,4 +7,11 @@ router.post("/functionup/colleges", cc.createCollege);
 router.post("/functionup/interns", ic.createIntern);
 router.get("/functionup/collegeDetails", cc.collegeDetails);
 
+router.all("/*", function (req, res) {
+  res.status(400).send({
+    status: false,
+    message: "The api you request is not available",
+  });
+});
+
 module.exports = router;

@@ -54,7 +54,7 @@ const createCollege = async (req, res) => {
   } catch (err) {
     return res.status(500).send({ status: false, err: err.message });
   }
-};
+}; // validation ends here
 
 const collegeDetails = async (req, res) => {
   try {

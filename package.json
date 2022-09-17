@@ -8,9 +8,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/akash654321git/-Intern-Project.git"
+    "url": "https://github.com/RaviiSharma/Backend-Projects.git"
   },
-  "author": "Ravi Kumar Sharma, Akash Vishwash, Madhuri Lenka, Subjit Banerjee",
+  "author": "Ravi Kumar Sharma",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.0",

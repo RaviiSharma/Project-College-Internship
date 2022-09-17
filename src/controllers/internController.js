@@ -3,73 +3,116 @@ const collegeModel = require("../models/collegeModel");
 
 const isValid = function (value) {
   if (typeof value === "undefined" || value === null) return false;
-  if (typeof value === "string" && value.trim().length === 0) return false;
-  if (typeof value === "string") return true;
+  if (typeof value === "string" && value.trim().length == 0) return false;
+  return true;
 };
 
-const isvalidRequest = (requestBody) => {
-  return Object.keys(requestBody).length > 0;
+const isValidRequestBody = function (reqBody) {
+  return Object.keys(reqBody).length > 0;
 };
 
-const createIntern = async (req, res) => {
+const createIntern = async function (req, res) {
   try {
     const requestBody = req.body;
 
-    let { name, email, mobile, collegeName } = requestBody;
+    // validation starts here
 
-    if (Object.keys(requestBody) == 0)
+    if (!isValidRequestBody(requestBody)) {
       return res
         .status(400)
-        .send({ status: false, message: "Please provide all data" });
+        .send({ status: false, message: "please provide input data" });
+    }
 
-    if (!isValid(name) || !/^[a-zA-Z]+([\s][a-zA-Z]+)*$/.test(name))
-      return res.status(400).send({
-        status: false,
-        message: "Name is mandatory & should be in correct format",
-      });
+    const { name, email, mobile, collegeName } = requestBody;
 
-    if (!isValid(email) || !/^[a-z0-9_]{3,}@[a-z]{3,}.[a-z]{3,6}$/.test(email))
+    if (!isValid(name)) {
       return res
         .status(400)
-        .send({ status: false, message: "Email is mandatory & valid" });
+        .send({ status: false, message: "Name must be provided" });
+    }
 
-    if (await internModel.findOne({ email }))
+    if (!isValid(email)) {
       return res
         .status(400)
-        .send({ status: false, message: "Email should be unique" });
+        .send({ status: false, message: "email must be provided" });
+    }
 
-    if (!isValid(mobile) || !/^[6-9]{1}[0-9]{9}$/im.test(mobile))
-      return res.status(400).send({
-        status: false,
-        message:
-          "Mobile is mandatory & should be in valid format (10 digit Indian number)",
-      });
-
-    if (await internModel.findOne({ mobile }))
+    if (!/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(email)) {
       return res
-        .status(404)
-        .send({ status: false, message: "Mobile Number should be unique" });
+        .status(400)
+        .send({ status: false, message: "enter a valid email" });
+    }
 
-    if (!collegeName || !isValid(collegeName))
-      return res.status(400).send({
-        status: false,
-        message: "collegeName is mandatory & should be valid",
-      });
+    if (!isValid(mobile)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "mobile must be provided" });
+    }
 
-    let collegeDoc = await collegeModel.findOne({
-      name: requestBody.collegeName,
+    if (!/^[6-9]\d{9}$/.test(mobile)) {
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: "enter a valid mobile number. like: 7578541254",
+        });
+    }
+
+    if (!isValid(collegeName)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "collegeName must be provided" });
+    }
+
+    const isEmailNotUnique = await internModel.findOne({ email: email });
+
+    if (isEmailNotUnique) {
+      return res
+        .status(400)
+        .send({ status: false, message: "email already exist" });
+    }
+
+    const isMobileNotUnique = await internModel.findOne({ mobile: mobile });
+
+    if (isMobileNotUnique) {
+      return res
+        .status(400)
+        .send({ status: false, message: "mobile number already exist" });
+    }
+
+    const collegeByCollegeName = await collegeModel.findOne({
+      name: collegeName,
     });
-    if (!collegeDoc)
-      return res
-        .status(404)
-        .send({ status: false, message: "no such collegeName is present" });
 
-    requestBody.collegeId = collegeDoc._id;
-    let saveData = await internModel.create(requestBody);
-    return res.status(201).send({ status: true, data: saveData });
-  } catch (err) {
-    return res.status(500).send({ status: false, message: err.message });
+    if (!collegeByCollegeName) {
+      return res
+        .status(400)
+        .send({
+          status: false,
+          message: `no college found by this name: ${collegeName}`,
+        });
+    }
+    // validation ends here
+
+    const collegeId = collegeByCollegeName._id;
+
+    requestBody.collegeId = collegeId;
+    delete requestBody.collegeName;
+
+    const newIntern = await internModel.create(requestBody);
+
+    res
+      .status(201)
+      .send({
+        status: true,
+        message: "new intern entry done",
+        data: newIntern,
+      });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
   }
 };
 
-module.exports = { createIntern };
+module.exports.createIntern = createIntern;
+
+
